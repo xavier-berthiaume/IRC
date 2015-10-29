@@ -1,7 +1,6 @@
 package server;
 
 import java.io.*;
-import java.util.*;
 import java.net.*;
 
 public class ServerConnect implements Runnable{
@@ -16,6 +15,10 @@ public class ServerConnect implements Runnable{
 		this.clientSocket = clientSocket;
 	}
 	
+	
+	/**
+	 * Using the accepted client socket, will create a BufferedWriter and BufferedReader object to allow IO operations with the socket's stream.
+	 */
 	private void createConnections() {
 		try{
 			writer = new BufferedWriter(new OutputStreamWriter(this.clientSocket.getOutputStream()));
@@ -25,6 +28,12 @@ public class ServerConnect implements Runnable{
 		}
 	}
 	
+	
+	/**
+	 * Will write to a single stream the String parameter. After writing, will add a new line and flush the BufferedWriter object's stream.
+	 * 
+	 * @param input is the message to be written to the stream.
+	 */
 	private void writeToStream(String input) {
 		try{
 			this.writer.write(input);
@@ -35,6 +44,11 @@ public class ServerConnect implements Runnable{
 		}
 	}
 	
+	/**
+	 * Will read from the InputStream and return a String object of the message.
+	 * 
+	 * @return String object of what is inside the InputStream.
+	 */
 	private String readFromStream(){
 		try{
 			return this.reader.readLine();
@@ -44,6 +58,9 @@ public class ServerConnect implements Runnable{
 		}
 	}
 	
+	/**
+	 * Will close the BufferedWriter, BufferedReader, then the socket in their respective orders.
+	 */
 	private void closeConnections(){
 		try{
 			this.writer.close();
@@ -54,6 +71,11 @@ public class ServerConnect implements Runnable{
 		}
 	}
 	
+	/**
+	 * Should be used exclusively to shut down the server-side application. It will close the socket from recieving any connections.
+	 * 
+	 * @param socket The server socket that hosts all the client sockets.
+	 */
 	private static void closeServer(ServerSocket socket){
 		try {
 			socket.close();
