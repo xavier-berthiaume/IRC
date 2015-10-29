@@ -25,6 +25,7 @@ public class ServerConnect implements Runnable{
 			reader = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
 		}catch(IOException e1){
 			System.err.println("Exception caught when trying to fetch InputStreamReader and OutputStreamWriter");
+			e1.printStackTrace();
 		}
 	}
 	
@@ -41,6 +42,7 @@ public class ServerConnect implements Runnable{
 			this.writer.flush();
 		}catch(IOException e1){
 			System.err.println("Exception caught when trying to write to the socket connection");
+			e1.printStackTrace();
 		}
 	}
 	
@@ -54,6 +56,7 @@ public class ServerConnect implements Runnable{
 			return this.reader.readLine();
 		}catch(IOException e1){
 			System.err.println("Exception caught when trying to read from the stream");
+			e1.printStackTrace();
 			return null;
 		}
 	}
@@ -68,6 +71,7 @@ public class ServerConnect implements Runnable{
 			this.clientSocket.close();
 		}catch(IOException e1){
 			System.err.println("Exception caught when trying to close the socket connection");
+			e1.printStackTrace();
 		}
 	}
 	
@@ -81,6 +85,7 @@ public class ServerConnect implements Runnable{
 			socket.close();
 		} catch (IOException e1) {
 			System.err.println("Exception caught when trying to close the server Socket");
+			e1.printStackTrace();
 		}
 	}
 	

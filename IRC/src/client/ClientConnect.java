@@ -4,7 +4,7 @@ import java.net.*;
 import java.awt.event.*;
 import java.io.*;
 
-public class ClientConnect implements ActionListener, Runnable{
+public class ClientConnect implements ActionListener, Runnable {
 
 	private ClientGui gui;
 	private Socket socket;
@@ -14,11 +14,11 @@ public class ClientConnect implements ActionListener, Runnable{
 	private String host;
 	private String username;
 	
-	public ClientConnect(ClientGui gui){
+	public ClientConnect(ClientGui gui) {
 		this.gui = gui;
 	}
 	
-	public void createConnection(){
+	public void createConnection() {
 		try{	
 			socket = new Socket(host, PORT);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -29,7 +29,7 @@ public class ClientConnect implements ActionListener, Runnable{
 		}
 	}
 		
-	public String readFromStream(){
+	public String readFromStream() {
 		try{
 			return reader.readLine();
 		}catch(IOException e1){
@@ -38,7 +38,7 @@ public class ClientConnect implements ActionListener, Runnable{
 		}
 	}
 	
-	public void writeToStream(String toWrite){
+	public void writeToStream(String toWrite) {
 		try{
 			writer.write(username + ": " + toWrite);
 			writer.newLine();

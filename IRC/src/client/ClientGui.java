@@ -25,6 +25,11 @@ public class ClientGui {
 	private JTextArea display;
 	private JButton send;
 	
+	
+	/**
+	 * Create the initial UI box that will take in the user's name and the ip they wish to connect to.
+	 * Will become deprecated in the following pushes.
+	 */
 	public void createLogin() {
 		connection = new ClientConnect(this);
 		//Create a top level frame with no possibility of resizing
@@ -58,9 +63,14 @@ public class ClientGui {
 		loginFrame.setVisible(true);
 	}
 	
-	public void createGui(){
+	
+	/**
+	 * The main client window. Is where the client enters messages to be typed and sends them to the server. 
+	 * The user also sees messages that were typed from this box.
+	 */
+	public void createGui() {
 		connection.createConnection();
-		//Create the top level frame with Dimensions 300 x 400, with no possibility of resizing it.
+		//Create the top level frame with Dimensions 300 x 400, with no possibility of resizing it
 		frame = new JFrame("Internet Relay Chat");
 		frame.setSize(new Dimension(300, 400));
 		frame.setResizable(false);
@@ -96,45 +106,78 @@ public class ClientGui {
 		thread.start();
 	}
 	
-	public void hideLogin(){
+	/**
+	 * Hides the login gui, disposes the frame and then calls on createGui to make the ui that the client interacts with.
+	 */
+	public void hideLogin() {
 		loginFrame.setVisible(false);
 		loginFrame.dispose();
 		this.createGui();
 	}
 
-	public JButton getConnectButton(){
+	/**
+	 * Getter for connect button.
+	 * 
+	 * @return JButton The JButton that is clicked when the user has input their information
+	 */
+	public JButton getConnectButton() {
 		return connect;
 	}
 	
-	public JButton getSendButton(){
+	/**
+	 * Getter for the send button.
+	 * 
+	 * @return JButton The button that is clicked when the user has finished entering a message to the input box.
+	 */
+	public JButton getSendButton() {
 		return send;
 	}
 	
-	public String getUsername(){
-		if(usernameInput.getText().equals(null)){
-			return "";
+	/**
+	 * Getter for the text within the usernameInput JTextField. If no information is set and the value is null, the default will be set to Anonymous. 
+	 * @return String The value of usernameInput
+	 */
+	public String getUsername() {
+		if(usernameInput.getText().equals("")) {
+			return "Anonymous";
 		}
 		return usernameInput.getText();
 	}
 	
-	public String getHost(){
-		if(hostInput.getText().equals(null)){
+	/**
+	 * Getter for the text within the hostInput JTextField. If no information is set and the value is empty, then the default becomes localhost.
+	 * @return String The value of hostInput
+	 */
+	public String getHost() {
+		if(hostInput.getText().equals("")){
 			return "localhost";
 		}
 		return hostInput.getText();
 	}
 	
-	public String getUserInput(){
+	/**
+	 * Getter for the text within the userInput JTextField.
+	 * @return String The value of userInput
+	 */
+	public String getUserInput() {
 		if(userInput.getText().equals(null)){
 			return "";
 		}
 		return userInput.getText();
 	}
 	
-	public void setUserInput(String input){
+	/**
+	 * Setter for the text in the userInput JTextField.
+	 * @param input String that will replace the text in the userInput JTextField
+	 */
+	public void setUserInput(String input) {
 		userInput.setText(input);
 	}
 	
+	/**
+	 * Will append to the display (the chat) the String parameter.
+	 * @param input String that will append itself to the display JTextArea
+	 */
 	public void appendDisplay(String input){
 		display.append(input);
 	}
