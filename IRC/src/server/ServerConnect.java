@@ -2,6 +2,7 @@ package server;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class ServerConnect implements Runnable{
 
@@ -15,7 +16,6 @@ public class ServerConnect implements Runnable{
 		this.clientSocket = clientSocket;
 	}
 	
-	
 	/**
 	 * Using the accepted client socket, will create a BufferedWriter and BufferedReader object to allow IO operations with the socket's stream.
 	 */
@@ -28,7 +28,6 @@ public class ServerConnect implements Runnable{
 			e1.printStackTrace();
 		}
 	}
-	
 	
 	/**
 	 * Will write to a single stream the String parameter. After writing, will add a new line and flush the BufferedWriter object's stream.

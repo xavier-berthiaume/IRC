@@ -1,6 +1,8 @@
 package client;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+
 import javax.swing.*;
 
 public class ClientGui {
@@ -21,10 +23,78 @@ public class ClientGui {
 	private JFrame frame;
 	private JPanel mainPanel;
 	private JPanel userPanel;
+	private JScrollPane userInputScrollPane;
 	private JTextArea userInput;
+	private JScrollPane displayScrollPane;
 	private JTextArea display;
 	private JButton send;
 	
+	//All elements below are linked with the JMenuBar
+	private JMenuBar menu;
+	private JMenu file;
+	private JMenuItem logout;
+	private JMenuItem save;
+	private JMenu edit;
+	private JMenuItem cut;
+	private JMenuItem copy;
+	private JMenuItem paste;
+	private JMenu window;
+	private JMenuItem font;
+	private JSeparator daynightSplit;
+	private ButtonGroup modeButton;
+	private JRadioButtonMenuItem dayMode;
+	private JRadioButtonMenuItem nightMode;
+	
+	/**
+	 * Creates the JMenuBar for the frame.
+	 * @return JMenuBar The menu bar to be added to the frame
+	 */
+	private JMenuBar createMenu(){
+		menu = new JMenuBar();
+		//File menu and submenus
+		file = new JMenu("File");
+		file.setMnemonic(KeyEvent.VK_F);
+		logout = new JMenuItem("Logout");
+		save = new JMenuItem("Save chat");
+		//Edit menu and submenus
+		edit = new JMenu("Edit");
+		edit.setMnemonic(KeyEvent.VK_E);
+		cut = new JMenuItem("Cut");
+		copy = new JMenuItem("Copy");
+		paste = new JMenuItem("Paste");
+		//Window menu and submenus
+		window = new JMenu("Window");
+		window.setMnemonic(KeyEvent.VK_W);
+		font = new JMenuItem("Font");
+		//Separate the radio buttons from the rest of the menu options.
+		daynightSplit = new JSeparator();
+		modeButton = new ButtonGroup();
+		dayMode = new JRadioButtonMenuItem("Day mode");
+		dayMode.setSelected(true);
+		nightMode = new JRadioButtonMenuItem("Night mode");
+		nightMode.setSelected(false);
+		
+		//Assemble all menu components together
+		file.add(logout);
+		file.add(save);
+		
+		edit.add(cut);
+		edit.add(copy);
+		edit.add(paste);
+		
+		window.add(font);
+		modeButton.add(dayMode);
+		modeButton.add(nightMode);
+		window.add(daynightSplit);
+		window.add(dayMode);
+		window.add(nightMode);
+		
+		menu.add(file);
+		menu.add(edit);
+		menu.add(window);
+		
+		return menu;
+	}
 	
 	/**
 	 * Create the initial UI box that will take in the user's name and the ip they wish to connect to.
@@ -63,7 +133,6 @@ public class ClientGui {
 		loginFrame.setVisible(true);
 	}
 	
-	
 	/**
 	 * The main client window. Is where the client enters messages to be typed and sends them to the server. 
 	 * The user also sees messages that were typed from this box.
@@ -79,28 +148,31 @@ public class ClientGui {
 		mainPanel = new JPanel();
 		//Create the area that displays text received
 		display = new JTextArea();
-		display.setPreferredSize(new Dimension(290, 200));
 		display.setEditable(false);
 		display.setLineWrap(true);
+		displayScrollPane = new JScrollPane(display);
+		displayScrollPane.setPreferredSize(new Dimension(290, 200));
 		//Create user panel and all user elements
 		userPanel = new JPanel();
 		userInput = new JTextArea();
-		userInput.setPreferredSize(new Dimension(150, 200));
 		userInput.setLineWrap(true);
+		userInputScrollPane = new JScrollPane(userInput);
+		userInputScrollPane.setPreferredSize(new Dimension(150, 200));
 		send = new JButton("Send");
 		send.setPreferredSize(new Dimension(100, 100));
 		send.addActionListener(connection);
 		//Add all elements in order to the user panel
-		userPanel.add(userInput);
+		userPanel.add(userInputScrollPane);
 		userPanel.add(send);
 		//Add elements to the main panel
-		mainPanel.add(display);
+		mainPanel.add(displayScrollPane);
 		mainPanel.add(userPanel);
 		
 		frame.add(mainPanel);
 		frame.setLocationRelativeTo(null);
 		frame.pack();
 		frame.setVisible(true);
+		frame.setJMenuBar(this.createMenu());
 		
 		Thread thread = new Thread(connection);
 		thread.start();
@@ -141,7 +213,7 @@ public class ClientGui {
 		if(usernameInput.getText().equals("")) {
 			return "Anonymous";
 		}
-		return usernameInput.getText();
+		return usernameInput.getText();	
 	}
 	
 	/**
@@ -181,5 +253,5 @@ public class ClientGui {
 	public void appendDisplay(String input){
 		display.append(input);
 	}
-
+	
 }
