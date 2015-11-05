@@ -1,9 +1,10 @@
 package client;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.text.*;
 
 public class ClientGui {
 
@@ -25,8 +26,10 @@ public class ClientGui {
 	private JFrame frame;
 	private JPanel mainPanel;
 	private JPanel userPanel;
+	private DefaultCaret userCaret;
 	private JScrollPane userInputScrollPane;
 	private JTextArea userInput;
+	private DefaultCaret displayCaret;
 	private JScrollPane displayScrollPane;
 	private JTextArea display;
 	private JButton send;
@@ -176,12 +179,16 @@ public class ClientGui {
 		display.setLineWrap(true);
 		displayScrollPane = new JScrollPane(display);
 		displayScrollPane.setPreferredSize(new Dimension(290, 200));
+		displayCaret = (DefaultCaret) display.getCaret();
+		displayCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		//Create user panel and all user elements
 		userPanel = new JPanel();
 		userInput = new JTextArea();
 		userInput.setLineWrap(true);
 		userInputScrollPane = new JScrollPane(userInput);
 		userInputScrollPane.setPreferredSize(new Dimension(150, 200));
+		userCaret = (DefaultCaret) userInput.getCaret();
+		userCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		send = new JButton("Send");
 		send.setPreferredSize(new Dimension(100, 200));
 		send.addActionListener(connection);
