@@ -10,7 +10,7 @@ public class ClientConnect implements ActionListener, Runnable {
 	private Socket socket;
 	private BufferedWriter writer;
 	private BufferedReader reader;
-	private final int PORT = 12345;
+	private int port = 12345;
 	private String host;
 	private String username;
 	
@@ -20,9 +20,11 @@ public class ClientConnect implements ActionListener, Runnable {
 	
 	public void createConnection() {
 		try{	
-			socket = new Socket(host, PORT);
+			socket = new Socket(host, port);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			Thread thread = new Thread(this);
+			thread.start();
 		}catch(IOException e1){
 			System.err.println("Exception caught when creating the socket connection");
 			System.exit(-1);
@@ -58,7 +60,9 @@ public class ClientConnect implements ActionListener, Runnable {
 		}else if(source.equals(gui.getConnectButton())){
 			host = gui.getHost();
 			username = gui.getUsername();
-			gui.hideLogin();
+			port = gui.getPort();
+			this.createConnection();
+			this.gui.appendDisplay("Success connecting to " + host + "!");
 		}
 	}
 

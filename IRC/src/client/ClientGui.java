@@ -2,7 +2,7 @@ package client;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-
+import java.util.*;
 import javax.swing.*;
 
 public class ClientGui {
@@ -16,6 +16,8 @@ public class ClientGui {
 	private JPanel hostPanel;
 	private JLabel hostLabel;
 	private JTextField hostInput;
+	private JLabel portLabel;
+	private JTextField portInput;
 	private JButton connect;
 	
 	//All the elements below are linked with the application
@@ -99,6 +101,8 @@ public class ClientGui {
 	/**
 	 * Create the initial UI box that will take in the user's name and the ip they wish to connect to.
 	 * Will become deprecated in the following pushes.
+	 * 
+	 * @deprecated
 	 */
 	public void createLogin() {
 		connection = new ClientConnect(this);
@@ -138,14 +142,34 @@ public class ClientGui {
 	 * The user also sees messages that were typed from this box.
 	 */
 	public void createGui() {
-		connection.createConnection();
+		connection = new ClientConnect(this);
 		//Create the top level frame with Dimensions 300 x 400, with no possibility of resizing it
 		frame = new JFrame("Internet Relay Chat");
-		frame.setSize(new Dimension(300, 400));
+		frame.setSize(new Dimension(600, 400));
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setJMenuBar(this.createMenu());
 		//Create main panel
 		mainPanel = new JPanel();
+		//Create the are where the user enters the hosts information
+		loginPanel = new JPanel();
+		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
+		userLabel = new JLabel("Username:\t");
+		usernameInput = new JTextField(16);
+		hostLabel = new JLabel("Host:\t");
+		hostInput = new JTextField(16);
+		portLabel = new JLabel("Port:\t");
+		portInput = new JTextField(16);
+		connect = new JButton("Connect!");
+		connect.addActionListener(connection);
+		//Add all elements to the loginPanel
+		loginPanel.add(userLabel);
+		loginPanel.add(usernameInput);
+		loginPanel.add(hostLabel);
+		loginPanel.add(hostInput);
+		loginPanel.add(portLabel);
+		loginPanel.add(portInput);
+		loginPanel.add(connect);
 		//Create the area that displays text received
 		display = new JTextArea();
 		display.setEditable(false);
@@ -159,12 +183,13 @@ public class ClientGui {
 		userInputScrollPane = new JScrollPane(userInput);
 		userInputScrollPane.setPreferredSize(new Dimension(150, 200));
 		send = new JButton("Send");
-		send.setPreferredSize(new Dimension(100, 100));
+		send.setPreferredSize(new Dimension(100, 200));
 		send.addActionListener(connection);
 		//Add all elements in order to the user panel
 		userPanel.add(userInputScrollPane);
 		userPanel.add(send);
 		//Add elements to the main panel
+		mainPanel.add(loginPanel);
 		mainPanel.add(displayScrollPane);
 		mainPanel.add(userPanel);
 		
@@ -172,14 +197,11 @@ public class ClientGui {
 		frame.setLocationRelativeTo(null);
 		frame.pack();
 		frame.setVisible(true);
-		frame.setJMenuBar(this.createMenu());
-		
-		Thread thread = new Thread(connection);
-		thread.start();
 	}
 	
 	/**
 	 * Hides the login gui, disposes the frame and then calls on createGui to make the ui that the client interacts with.
+	 * @deprecated
 	 */
 	public void hideLogin() {
 		loginFrame.setVisible(false);
@@ -210,10 +232,12 @@ public class ClientGui {
 	 * @return String The value of usernameInput
 	 */
 	public String getUsername() {
-		if(usernameInput.getText().equals("")) {
+		String username = usernameInput.getText();
+		usernameInput.setText("");
+		if(username.equals("")) {
 			return "Anonymous";
 		}
-		return usernameInput.getText();	
+		return username;	
 	}
 	
 	/**
@@ -221,10 +245,28 @@ public class ClientGui {
 	 * @return String The value of hostInput
 	 */
 	public String getHost() {
-		if(hostInput.getText().equals("")){
+		String host = hostInput.getText();
+		hostInput.setText("");
+		if(host.equals("")){
 			return "localhost";
 		}
-		return hostInput.getText();
+		return host;
+	}
+	
+	public int getPort(){
+		String portText = portInput.getText();
+		portInput.setText("");
+		if(portText.equals("")){
+			return 12345;
+		}
+		try{
+			int port = Integer.parseInt(portText);
+			if(port > 1024)
+				return port;
+			return 12345;
+		}catch(IllegalFormatException e1){
+			return 12345;
+		}
 	}
 	
 	/**
