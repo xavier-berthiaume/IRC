@@ -193,6 +193,7 @@ public class ClientGui {
 		mainPanel.add(displayScrollPane);
 		mainPanel.add(userPanel);
 		
+		this.lockChat();
 		frame.add(mainPanel);
 		frame.setLocationRelativeTo(null);
 		frame.pack();
@@ -294,6 +295,24 @@ public class ClientGui {
 	 */
 	public void appendDisplay(String input){
 		display.append(input);
+	}
+
+	public void lockChat(){
+		userInput.setEditable(false);
+		send.setEnabled(false);
+		usernameInput.setEditable(true);
+		hostInput.setEditable(true);
+		portInput.setEditable(true);
+		connect.setEnabled(true);
+	}
+	
+	public void unlockChat(){
+		userInput.setEditable(true);
+		send.setEnabled(true);
+		usernameInput.setEditable(false);
+		hostInput.setEditable(false);
+		portInput.setEditable(false);
+		connect.setEnabled(false);
 	}
 	
 }

@@ -50,19 +50,27 @@ public class ClientConnect implements ActionListener, Runnable {
 		}
 	}
 	
+	public boolean checkMessage(String input){
+		if(input.equals(null) || input.equals(""))
+			return false;
+		return true;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		Object source = event.getSource();
 		//Check if the source of the ActionEvent is the send button
 		if(source.equals(gui.getSendButton())){
-			this.writeToStream(gui.getUserInput());
+			if(this.checkMessage(gui.getUserInput()))
+				this.writeToStream(gui.getUserInput());
 			gui.setUserInput("");
 		}else if(source.equals(gui.getConnectButton())){
 			host = gui.getHost();
 			username = gui.getUsername();
 			port = gui.getPort();
 			this.createConnection();
-			this.gui.appendDisplay("Success connecting to " + host + "!");
+			this.gui.appendDisplay("Success connecting to " + host + "!\n");
+			this.gui.unlockChat();
 		}
 	}
 
