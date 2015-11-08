@@ -7,32 +7,37 @@ import javax.swing.*;
 import javax.swing.text.*;
 
 public class ClientGui {
-
-	//All the elements below are linked with the login
-	private JFrame loginFrame;
+	
+	//All the elements below are linked with the user info area
+	private JPanel login;
 	private JPanel loginPanel;
-	private JPanel usernamePanel;
 	private JLabel userLabel;
 	private JTextField usernameInput;
-	private JPanel hostPanel;
 	private JLabel hostLabel;
 	private JTextField hostInput;
 	private JLabel portLabel;
 	private JTextField portInput;
 	private JButton connect;
+	private JButton logoutButton;
+	
+	//All the elements below are linked with the display area
+	private JPanel displayArea;
+	private DefaultCaret displayCaret;
+	private JScrollPane displayScrollPane;
+	private JTextArea display;
+	
+	//All the elements below are linked with the user area
+	private JPanel userPanel;
+	private DefaultCaret userCaret;
+	private JScrollPane userInputScrollPane;
+	private JTextArea userInput;
+	private JButton send;
 	
 	//All the elements below are linked with the application
 	private ClientConnect connection;
 	private JFrame frame;
 	private JPanel mainPanel;
-	private JPanel userPanel;
-	private DefaultCaret userCaret;
-	private JScrollPane userInputScrollPane;
-	private JTextArea userInput;
-	private DefaultCaret displayCaret;
-	private JScrollPane displayScrollPane;
-	private JTextArea display;
-	private JButton send;
+	private JPanel userPanelDivider;
 	
 	//All elements below are linked with the JMenuBar
 	private JMenuBar menu;
@@ -52,7 +57,7 @@ public class ClientGui {
 	
 	/**
 	 * Creates the JMenuBar for the frame.
-	 * @return JMenuBar The menu bar to be added to the frame
+	 * @return JMenuBar The menu bar to be added to the frame.
 	 */
 	private JMenuBar createMenu(){
 		menu = new JMenuBar();
@@ -102,58 +107,12 @@ public class ClientGui {
 	}
 	
 	/**
-	 * Create the initial UI box that will take in the user's name and the ip they wish to connect to.
-	 * Will become deprecated in the following pushes.
-	 * 
-	 * @deprecated
+	 * Create the login area as a JPanel to be placed in the mainPanel.
+	 * @return JPanel The login area.
 	 */
-	public void createLogin() {
-		connection = new ClientConnect(this);
-		//Create a top level frame with no possibility of resizing
-		loginFrame = new JFrame("Login");
-		loginFrame.setResizable(false);
-		loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//Create the main panel
-		loginPanel = new JPanel();
-		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
-		//Create the gui elements
-		usernamePanel = new JPanel();
-		userLabel = new JLabel("Username:\t");
-		usernameInput = new JTextField(16);
-		hostPanel = new JPanel();
-		hostLabel = new JLabel("Host:\t");
-		hostInput = new JTextField(16);
-		connect = new JButton("connect");
-		connect.addActionListener(connection);
-		//Add all elements to their respective panels
-		usernamePanel.add(userLabel);
-		usernamePanel.add(usernameInput);
-		hostPanel.add(hostLabel);
-		hostPanel.add(hostInput);
-		loginPanel.add(usernamePanel);
-		loginPanel.add(hostPanel);
-		loginPanel.add(connect);
-		//Prepare the frame and display it
-		loginFrame.add(loginPanel);
-		loginFrame.pack();
-		loginFrame.setLocationRelativeTo(null);
-		loginFrame.setVisible(true);
-	}
-	
-	/**
-	 * The main client window. Is where the client enters messages to be typed and sends them to the server. 
-	 * The user also sees messages that were typed from this box.
-	 */
-	public void createGui() {
-		connection = new ClientConnect(this);
-		//Create the top level frame with Dimensions 300 x 400, with no possibility of resizing it
-		frame = new JFrame("Internet Relay Chat");
-		frame.setSize(new Dimension(600, 400));
-		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setJMenuBar(this.createMenu());
-		//Create main panel
-		mainPanel = new JPanel();
+	private JPanel createLogin(){
+		login = new JPanel();
+		login.setLayout(new BoxLayout(login, BoxLayout.Y_AXIS));
 		//Create the are where the user enters the hosts information
 		loginPanel = new JPanel();
 		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
@@ -163,8 +122,14 @@ public class ClientGui {
 		hostInput = new JTextField(16);
 		portLabel = new JLabel("Port:\t");
 		portInput = new JTextField(16);
+		//Create a JPanel to fit two buttons, connect and logout, side by side.
+		JPanel buttons = new JPanel();
 		connect = new JButton("Connect!");
 		connect.addActionListener(connection);
+		logoutButton = new JButton("Logout");
+		logoutButton.addActionListener(connection);
+		buttons.add(connect);
+		buttons.add(logoutButton);
 		//Add all elements to the loginPanel
 		loginPanel.add(userLabel);
 		loginPanel.add(usernameInput);
@@ -172,33 +137,87 @@ public class ClientGui {
 		loginPanel.add(hostInput);
 		loginPanel.add(portLabel);
 		loginPanel.add(portInput);
-		loginPanel.add(connect);
+		loginPanel.add(buttons);
+		login.add(loginPanel);
+		login.add(this.createBufferZone(new Dimension(100, 250)));
+		return login;
+	}
+	
+	
+	/**
+	 * Create a buffer zone between elements of the desired size.
+	 * @param size The size of the buffer zone.
+	 */
+	private JPanel createBufferZone(Dimension size){
+		JPanel buffer = new JPanel();
+		buffer.setPreferredSize(size);
+		return buffer;
+	}
+	
+	/**
+	 * Creates the display area with a scrolling bar. The scrolling area with automatically follow new text because of the caret.
+	 * @return JPanel The display area as a JPanel.
+	 */
+	private JPanel createDisplayArea(){
 		//Create the area that displays text received
+		displayArea = new JPanel();
 		display = new JTextArea();
 		display.setEditable(false);
 		display.setLineWrap(true);
 		displayScrollPane = new JScrollPane(display);
-		displayScrollPane.setPreferredSize(new Dimension(290, 200));
+		displayScrollPane.setPreferredSize(new Dimension(375, 300));
 		displayCaret = (DefaultCaret) display.getCaret();
 		displayCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		displayArea.add(displayScrollPane);
+		return displayArea;
+	}
+	
+	/**
+	 * Creates the user's area containing the input textbox and the send button.
+	 * @return JPanel The user's area in JPanel form.
+	 */
+	private JPanel createUserArea(){
 		//Create user panel and all user elements
 		userPanel = new JPanel();
 		userInput = new JTextArea();
 		userInput.setLineWrap(true);
 		userInputScrollPane = new JScrollPane(userInput);
-		userInputScrollPane.setPreferredSize(new Dimension(150, 200));
+		userInputScrollPane.setPreferredSize(new Dimension(300, 75));
 		userCaret = (DefaultCaret) userInput.getCaret();
 		userCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		send = new JButton("Send");
-		send.setPreferredSize(new Dimension(100, 200));
+		send.setPreferredSize(new Dimension(75, 75));
 		send.addActionListener(connection);
 		//Add all elements in order to the user panel
 		userPanel.add(userInputScrollPane);
 		userPanel.add(send);
+		return userPanel;
+	}
+	
+	/**
+	 * The main client window. Is where the client enters messages to be typed and sends them to the server. 
+	 * The user also sees messages that were typed from this box.
+	 */
+	public void createGui() {
+		connection = new ClientConnect(this);
+		//Create the top level frame with no possibility of resizing it
+		frame = new JFrame("Internet Relay Chat");
+		frame.setSize(new Dimension(700, 700));
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setJMenuBar(this.createMenu());
+		//Create main panel
+		mainPanel = new JPanel(new BorderLayout());
+		//Create the user panel (Where the user's display and text box is placed)
+		userPanelDivider = new JPanel();
+		userPanelDivider.setLayout(new BoxLayout(userPanelDivider, BoxLayout.Y_AXIS));
+		//Add elements to the user panel
+		userPanelDivider.add(this.createDisplayArea());
+		userPanelDivider.add(this.createUserArea());
+		
 		//Add elements to the main panel
-		mainPanel.add(loginPanel);
-		mainPanel.add(displayScrollPane);
-		mainPanel.add(userPanel);
+		mainPanel.add(this.createLogin(), BorderLayout.WEST);
+		mainPanel.add((userPanelDivider), BorderLayout.CENTER);
 		
 		this.lockChat();
 		frame.add(mainPanel);
@@ -206,20 +225,9 @@ public class ClientGui {
 		frame.pack();
 		frame.setVisible(true);
 	}
-	
-	/**
-	 * Hides the login gui, disposes the frame and then calls on createGui to make the ui that the client interacts with.
-	 * @deprecated
-	 */
-	public void hideLogin() {
-		loginFrame.setVisible(false);
-		loginFrame.dispose();
-		this.createGui();
-	}
 
 	/**
 	 * Getter for connect button.
-	 * 
 	 * @return JButton The JButton that is clicked when the user has input their information
 	 */
 	public JButton getConnectButton() {
@@ -228,11 +236,18 @@ public class ClientGui {
 	
 	/**
 	 * Getter for the send button.
-	 * 
 	 * @return JButton The button that is clicked when the user has finished entering a message to the input box.
 	 */
 	public JButton getSendButton() {
 		return send;
+	}
+	
+	/**
+	 * Getter for the logout button.
+	 * @return JButton The logout button
+	 */
+	public JButton getLogoutButton(){
+		return logoutButton;
 	}
 	
 	/**
@@ -249,7 +264,7 @@ public class ClientGui {
 	}
 	
 	/**
-	 * Getter for the text within the hostInput JTextField. If no information is set and the value is empty, then the default becomes localhost.
+	 * Getter for the text within the hostInput JTextField. If no information is set and the value is empty, the default becomes localhost.
 	 * @return String The value of hostInput
 	 */
 	public String getHost() {
@@ -261,6 +276,10 @@ public class ClientGui {
 		return host;
 	}
 	
+	/**
+	 * Getter for the text within the portInput JTextField. If no information is set and the value is empty, the default becomes 12345.
+	 * @return int The port number to connect to
+	 */
 	public int getPort(){
 		String portText = portInput.getText();
 		portInput.setText("");
@@ -304,6 +323,9 @@ public class ClientGui {
 		display.append(input);
 	}
 
+	/**
+	 * Will allow the user to enter login information but will completely lock the chat from being edited, or have information set.
+	 */
 	public void lockChat(){
 		userInput.setEditable(false);
 		send.setEnabled(false);
@@ -311,8 +333,12 @@ public class ClientGui {
 		hostInput.setEditable(true);
 		portInput.setEditable(true);
 		connect.setEnabled(true);
+		logoutButton.setEnabled(false);
 	}
 	
+	/**
+	 * Will stop the user from entering login information, but will allow the user to type messages and send them.
+	 */
 	public void unlockChat(){
 		userInput.setEditable(true);
 		send.setEnabled(true);
@@ -320,6 +346,7 @@ public class ClientGui {
 		hostInput.setEditable(false);
 		portInput.setEditable(false);
 		connect.setEnabled(false);
+		logoutButton.setEnabled(true);
 	}
 	
 }

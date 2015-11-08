@@ -15,7 +15,6 @@ public class Server {
 	
 	/**
 	 * Creates the ServerSocket object that will listen for connections on the desired port number.
-	 * 
 	 * @param port
 	 * @throws IOException
 	 */
@@ -34,9 +33,14 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * Remove the client that was connected from the hashtable, along with their corresponding BufferedWriter
+	 * @param client The socket that has disconnected
+	 */
 	public void removeConnection(Socket client){
 		synchronized(outputStreams){
 			System.out.println(client + " is leaving the chat");
+			this.broadcastMessage(client + " is leaving the chat");
 			outputStreams.remove(client);
 			try{
 				client.close();

@@ -20,7 +20,7 @@ public class ServerConnect extends Thread{
 			BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			while(true){
 				String message = reader.readLine();
-				System.out.println("Sending '" + message + "' to server");
+				System.out.println(message);
 				server.broadcastMessage(message);
 			}
 		}catch(IOException e1){
