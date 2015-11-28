@@ -39,8 +39,8 @@ public class Server {
 	 */
 	public void removeConnection(Socket client){
 		synchronized(outputStreams){
-			System.out.println(client + " is leaving the chat");
-			this.broadcastMessage(client + " is leaving the chat");
+			//System.out.println(client + " is leaving the chat");
+			//this.broadcastMessage(client + " is leaving the chat");
 			outputStreams.remove(client);
 			try{
 				client.close();

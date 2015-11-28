@@ -22,6 +22,8 @@ public class ServerConnect extends Thread{
 				String message = reader.readLine();
 				System.out.println(message);
 				server.broadcastMessage(message);
+				if(message.substring(0, 4).equals("User"))
+					server.removeConnection(clientSocket);
 			}
 		}catch(IOException e1){
 			

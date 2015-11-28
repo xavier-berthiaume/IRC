@@ -19,6 +19,7 @@ public class ClientGui {
 	private JTextField portInput;
 	private JButton connect;
 	private JButton logoutButton;
+	private JPanel buttons;
 	
 	//All the elements below are linked with the display area
 	private JPanel displayArea;
@@ -59,12 +60,13 @@ public class ClientGui {
 	 * Creates the JMenuBar for the frame.
 	 * @return JMenuBar The menu bar to be added to the frame.
 	 */
-	private JMenuBar createMenu(){
+	private JMenuBar createMenu(ClientConnect connection){
 		menu = new JMenuBar();
 		//File menu and submenus
 		file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
 		logout = new JMenuItem("Logout");
+		logout.addMouseListener(connection);
 		save = new JMenuItem("Save chat");
 		//Edit menu and submenus
 		edit = new JMenu("Edit");
@@ -76,13 +78,16 @@ public class ClientGui {
 		window = new JMenu("Window");
 		window.setMnemonic(KeyEvent.VK_W);
 		font = new JMenuItem("Font");
+		font.addMouseListener(connection);
 		//Separate the radio buttons from the rest of the menu options.
 		daynightSplit = new JSeparator();
 		modeButton = new ButtonGroup();
 		dayMode = new JRadioButtonMenuItem("Day mode");
 		dayMode.setSelected(true);
+		dayMode.addMouseListener(connection);
 		nightMode = new JRadioButtonMenuItem("Night mode");
 		nightMode.setSelected(false);
+		nightMode.addMouseListener(connection);
 		
 		//Assemble all menu components together
 		file.add(logout);
@@ -116,14 +121,26 @@ public class ClientGui {
 		//Create the are where the user enters the hosts information
 		loginPanel = new JPanel();
 		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
-		userLabel = new JLabel("Username:\t");
+		//Create a JPanel to store the username elements in a flowLayout
+		JPanel unameP = new JPanel();
+		userLabel = new JLabel("Name: \t");
 		usernameInput = new JTextField(16);
-		hostLabel = new JLabel("Host:\t");
+		unameP.add(userLabel);
+		unameP.add(usernameInput);
+		//Create a JPanel to store the host elements in a flowLayout
+		JPanel hostP = new JPanel();
+		hostLabel = new JLabel("Host: \t");
 		hostInput = new JTextField(16);
-		portLabel = new JLabel("Port:\t");
+		hostP.add(hostLabel);
+		hostP.add(hostInput);
+		//Create a JPanel to store the port elements in a a flowLayout
+		JPanel portP = new JPanel();
+		portLabel = new JLabel("Port: \t");
 		portInput = new JTextField(16);
+		portP.add(portLabel);
+		portP.add(portInput);
 		//Create a JPanel to fit two buttons, connect and logout, side by side.
-		JPanel buttons = new JPanel();
+		buttons = new JPanel();
 		connect = new JButton("Connect!");
 		connect.addActionListener(connection);
 		logoutButton = new JButton("Logout");
@@ -131,15 +148,12 @@ public class ClientGui {
 		buttons.add(connect);
 		buttons.add(logoutButton);
 		//Add all elements to the loginPanel
-		loginPanel.add(userLabel);
-		loginPanel.add(usernameInput);
-		loginPanel.add(hostLabel);
-		loginPanel.add(hostInput);
-		loginPanel.add(portLabel);
-		loginPanel.add(portInput);
+		loginPanel.add(unameP);
+		loginPanel.add(hostP);
+		loginPanel.add(portP);
 		loginPanel.add(buttons);
 		login.add(loginPanel);
-		login.add(this.createBufferZone(new Dimension(100, 250)));
+		login.add(this.createBufferZone(new Dimension(10, 250)));
 		return login;
 	}
 	
@@ -205,7 +219,7 @@ public class ClientGui {
 		frame.setSize(new Dimension(700, 700));
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setJMenuBar(this.createMenu());
+		frame.setJMenuBar(this.createMenu(connection));
 		//Create main panel
 		mainPanel = new JPanel(new BorderLayout());
 		//Create the user panel (Where the user's display and text box is placed)
@@ -217,15 +231,48 @@ public class ClientGui {
 		
 		//Add elements to the main panel
 		mainPanel.add(this.createLogin(), BorderLayout.WEST);
-		mainPanel.add((userPanelDivider), BorderLayout.CENTER);
-		
+		mainPanel.add((userPanelDivider), BorderLayout.CENTER);		
 		this.lockChat();
-		frame.add(mainPanel);
+		frame.setContentPane(mainPanel);
 		frame.setLocationRelativeTo(null);
 		frame.pack();
+		frame.addWindowFocusListener(connection);
 		frame.setVisible(true);
+		
 	}
 
+	/**
+	 * Method used to retrive all the JPanels of the current gui.
+	 * @return JPanel[]
+	 */
+	public JPanel[] getAllJPanels(){
+		JPanel[] panels = new JPanel[7];
+		panels[0] = login;
+		panels[1] = loginPanel;
+		panels[2] = displayArea;
+		panels[3] = userPanel;
+		panels[4] = mainPanel;
+		panels[5] = userPanelDivider;
+		panels[6] = buttons;
+		return panels;
+	}
+	
+	/**
+	 * Getter for the nightMode JMenuItem
+	 * @return JMenuItem
+	 */
+	public JMenuItem getNightMode(){
+		return nightMode;
+	}
+	
+	/**
+	 * Getter for the dayMode JMenuItem
+	 * @return JMenuItem
+	 */
+	public JMenuItem getDayMode(){
+		return dayMode;
+	}
+	
 	/**
 	 * Getter for connect button.
 	 * @return JButton The JButton that is clicked when the user has input their information
@@ -315,6 +362,14 @@ public class ClientGui {
 		userInput.setText(input);
 	}
 	
+	public JTextArea getDisplay(){
+		return display;
+	}
+	
+	public JTextArea getInputArea(){
+		return userInput;
+	}
+	
 	/**
 	 * Will append to the display (the chat) the String parameter.
 	 * @param input String that will append itself to the display JTextArea
@@ -349,4 +404,81 @@ public class ClientGui {
 		logoutButton.setEnabled(true);
 	}
 	
+	/**
+	 * Changes the color of all the gui's elements so that they become darker, with white text instead of black text on a white background.
+	 */
+	public void nightMode(){
+		//Sets the colors for all the gui elements to Gray and Dark Gray. Specifics are handled afterwards.
+		for(JPanel panel : this.getAllJPanels()){
+			for(Component c : panel.getComponents()){
+				this.changeColor(c, false);
+			}
+		}
+		//Specific elements are changed here
+		this.changeColor(display, false);
+		this.changeColor(userInput, false);
+		this.changeColor(usernameInput, false);
+		this.changeColor(hostInput, false);
+		this.changeColor(portInput, false);
+		this.changeColor(userLabel, false);
+		this.changeColor(hostLabel, false);
+		this.changeColor(portLabel, false);
+	}
+	
+	private void changeColor(Component c, boolean day){
+		if(day){
+			Color[] colors = new Color[2];
+			if(c.getClass() == new JPanel().getClass()){
+				colors = this.defaultColor("Panel");
+			}else if(c.getClass() == new JLabel().getClass()){
+				colors = this.defaultColor("Label");
+			}else if(c.getClass() == new JButton().getClass()){
+				colors = this.defaultColor("Button");
+			}else if(c.getClass() == new JTextArea().getClass()){
+				colors = this.defaultColor("TextArea");
+			}else if(c.getClass() == new JTextField().getClass()){
+				colors = this.defaultColor("TextField");
+			}
+			c.setBackground(colors[0]);
+			c.setForeground(colors[1]);
+		}else{
+			c.setForeground(Color.GREEN);
+			c.setBackground(Color.DARK_GRAY);
+		}
+	}
+	
+	private Color[] defaultColor(String classType){
+		Color[] colors = new Color[2];
+		colors[0] = UIManager.getColor(classType + ".background");
+		colors[1] = UIManager.getColor(classType + ".foreground");
+		return colors;
+	}
+	
+	/**
+	 * Changes the color of all the gui's elements so that they become lighter, with black text instead of white text on a black background.
+	 */
+	public void dayMode(){
+		for(JPanel panel : this.getAllJPanels()){
+			for(Component c : panel.getComponents()){
+				this.changeColor(c, true);
+			}
+		}
+		//Specific elements are changed here
+		this.changeColor(display, true);
+		this.changeColor(userInput, true);
+		this.changeColor(usernameInput, true);
+		this.changeColor(hostInput, true);
+		this.changeColor(portInput, true);
+		this.changeColor(userLabel, true);
+		this.changeColor(hostLabel, true);
+		this.changeColor(portLabel, true);
+	}
+	
+	public JMenuItem getLogout(){
+		return logout;
+	}
+	
+	public JMenuItem getFontEdit(){
+		return font;
+	}
 }

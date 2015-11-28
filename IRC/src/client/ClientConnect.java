@@ -4,7 +4,7 @@ import java.net.*;
 import java.awt.event.*;
 import java.io.*;
 
-public class ClientConnect implements ActionListener, Runnable {
+public class ClientConnect implements ActionListener, Runnable, MouseListener, WindowFocusListener {
 
 	private ClientGui gui;
 	private Socket socket;
@@ -13,6 +13,8 @@ public class ClientConnect implements ActionListener, Runnable {
 	private int port = 12345;
 	private String host;
 	private String username;
+	private boolean connected;
+	private FontManager manager;
 	
 	public ClientConnect(ClientGui gui) {
 		this.gui = gui;
@@ -28,6 +30,7 @@ public class ClientConnect implements ActionListener, Runnable {
 			socket = new Socket(host, port);
 			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			connected = true;
 			Thread thread = new Thread(this);
 			thread.start();
 			this.gui.appendDisplay("Success connecting to " + host + "!\n");
@@ -90,9 +93,7 @@ public class ClientConnect implements ActionListener, Runnable {
 	
 	/**
 	 * Close the socket connection and all its readers/writers.
-	 * @deprecated
 	 */
-	@SuppressWarnings("unused")
 	private void closeConnection() {
 		try {
 			this.reader.close();
@@ -103,6 +104,12 @@ public class ClientConnect implements ActionListener, Runnable {
 		}
 	}
 	
+	private void logout(){
+		this.writeToStream("User: " + username + " is disconnecting from the server", false);
+		connected = false;
+		this.closeConnection();
+		this.gui.lockChat();
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent event) {
@@ -121,17 +128,71 @@ public class ClientConnect implements ActionListener, Runnable {
 				this.writeToStream(username + " has joined the chat!", false);
 			}
 		} else if(source.equals(gui.getLogoutButton())) {
-			this.gui.appendDisplay("Closing connection... \n");
-			this.gui.lockChat();
+			this.logout();
 		}
 	}
 
 	@Override
 	public void run() {
-		while(true) { 
+		while(connected) { 
 			gui.appendDisplay(this.readFromStream());
 			gui.appendDisplay("\n");
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent mouse) {
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		Object event = arg0.getSource();
+		if(gui.getDayMode().equals(event)){
+			gui.dayMode();
+		}else if(gui.getNightMode().equals(event)){
+			gui.nightMode();
+		}else if(gui.getLogout().equals(event)){
+			this.logout();
+		}else if(gui.getFontEdit().equals(event)){
+			this.manager = new FontWindow().getManager();
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowGainedFocus(WindowEvent arg0) {
+		try{
+			if(!manager.equals(null)){
+				gui.getDisplay().setFont(manager.getFont());
+				gui.getInputArea().setFont(manager.getFont());
+			}
+		}catch(NullPointerException e1){
+			
+		}
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
