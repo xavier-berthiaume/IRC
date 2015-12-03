@@ -9,6 +9,7 @@ public class FontManager implements ItemListener, ChangeListener, ListSelectionL
 
 	private FontWindow gui;
 	private Font font;
+	private Color color;
 	private static final Color[] COLORS = {Color.BLACK, Color.BLUE, Color.RED, Color.GREEN, Color.WHITE};
 	
 	public FontManager(FontWindow gui){
@@ -44,6 +45,7 @@ public class FontManager implements ItemListener, ChangeListener, ListSelectionL
 			gui.hideWindow();
 		}else if(source.equals(gui.getApply())){
 			font = new Font(gui.getFontName().getSelectedValue(),Font.PLAIN, (int) gui.getSizeSpinner().getValue());
+			color = FontManager.COLORS[gui.getBox().getSelectedIndex()];
 			gui.hideWindow();
 		}
 		
@@ -57,5 +59,8 @@ public class FontManager implements ItemListener, ChangeListener, ListSelectionL
 		this.font = font;
 	}
 
+	public Color getColor() {
+		return color;
+	}
 
 }

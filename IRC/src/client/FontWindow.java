@@ -24,6 +24,11 @@ public class FontWindow extends JFrame {
 	}
 	
 	private void createGUI(){
+		//Make the gui look nice on all OS', thanks Jeegna! :)
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {	
+		}
 		manager = new FontManager(this);
 		setResizable(false);
 		setTitle("Edit Font");

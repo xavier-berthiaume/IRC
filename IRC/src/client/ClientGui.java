@@ -60,13 +60,12 @@ public class ClientGui {
 	 * Creates the JMenuBar for the frame.
 	 * @return JMenuBar The menu bar to be added to the frame.
 	 */
-	private JMenuBar createMenu(ClientConnect connection){
+	private JMenuBar createMenu(){
 		menu = new JMenuBar();
 		//File menu and submenus
 		file = new JMenu("File");
 		file.setMnemonic(KeyEvent.VK_F);
 		logout = new JMenuItem("Logout");
-		logout.addMouseListener(connection);
 		save = new JMenuItem("Save chat");
 		//Edit menu and submenus
 		edit = new JMenu("Edit");
@@ -178,6 +177,7 @@ public class ClientGui {
 		display = new JTextArea();
 		display.setEditable(false);
 		display.setLineWrap(true);
+		display.setWrapStyleWord(true);
 		displayScrollPane = new JScrollPane(display);
 		displayScrollPane.setPreferredSize(new Dimension(375, 300));
 		displayCaret = (DefaultCaret) display.getCaret();
@@ -195,6 +195,7 @@ public class ClientGui {
 		userPanel = new JPanel();
 		userInput = new JTextArea();
 		userInput.setLineWrap(true);
+		userInput.setWrapStyleWord(true);
 		userInputScrollPane = new JScrollPane(userInput);
 		userInputScrollPane.setPreferredSize(new Dimension(300, 75));
 		userCaret = (DefaultCaret) userInput.getCaret();
@@ -213,13 +214,18 @@ public class ClientGui {
 	 * The user also sees messages that were typed from this box.
 	 */
 	public void createGui() {
+		//Make the gui look nice on all OS', thanks Jeegna! :)
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+		}
 		connection = new ClientConnect(this);
 		//Create the top level frame with no possibility of resizing it
 		frame = new JFrame("Internet Relay Chat");
 		frame.setSize(new Dimension(700, 700));
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setJMenuBar(this.createMenu(connection));
+		frame.setJMenuBar(this.createMenu());
 		//Create main panel
 		mainPanel = new JPanel(new BorderLayout());
 		//Create the user panel (Where the user's display and text box is placed)
@@ -362,10 +368,18 @@ public class ClientGui {
 		userInput.setText(input);
 	}
 	
+	/**
+	 * Getter for the display area itself.
+	 * @return JTextArea The display area
+	 */
 	public JTextArea getDisplay(){
 		return display;
 	}
 	
+	/**
+	 * Getter for the user input area itself
+	 * @return JTextArea The user input area
+	 */
 	public JTextArea getInputArea(){
 		return userInput;
 	}
@@ -389,6 +403,8 @@ public class ClientGui {
 		portInput.setEditable(true);
 		connect.setEnabled(true);
 		logoutButton.setEnabled(false);
+		logout.setEnabled(false);
+		logout.removeMouseListener(connection);
 	}
 	
 	/**
@@ -402,6 +418,8 @@ public class ClientGui {
 		portInput.setEditable(false);
 		connect.setEnabled(false);
 		logoutButton.setEnabled(true);
+		logout.setEnabled(true);
+		logout.addMouseListener(connection);
 	}
 	
 	/**
@@ -425,6 +443,31 @@ public class ClientGui {
 		this.changeColor(portLabel, false);
 	}
 	
+	/**
+	 * Changes the color of all the gui's elements so that they become lighter, with black text instead of white text on a black background.
+	 */
+	public void dayMode(){
+		for(JPanel panel : this.getAllJPanels()){
+			for(Component c : panel.getComponents()){
+				this.changeColor(c, true);
+			}
+		}
+		//Specific elements are changed here
+		this.changeColor(display, true);
+		this.changeColor(userInput, true);
+		this.changeColor(usernameInput, true);
+		this.changeColor(hostInput, true);
+		this.changeColor(portInput, true);
+		this.changeColor(userLabel, true);
+		this.changeColor(hostLabel, true);
+		this.changeColor(portLabel, true);
+	}
+	
+	/**
+	 * Changes the color of a specific Component Object according to the mode we select. True being day mode and false being night mode.
+	 * @param c The component that must be modified
+	 * @param day The color change to be applied
+	 */
 	private void changeColor(Component c, boolean day){
 		if(day){
 			Color[] colors = new Color[2];
@@ -447,31 +490,16 @@ public class ClientGui {
 		}
 	}
 	
+	/**
+	 * Changes the color of an element back to its original color upon construction. According to the element a certain color will be chosen from the UIManager's list.
+	 * @param classType A string representation of the 
+	 * @return
+	 */
 	private Color[] defaultColor(String classType){
 		Color[] colors = new Color[2];
 		colors[0] = UIManager.getColor(classType + ".background");
 		colors[1] = UIManager.getColor(classType + ".foreground");
 		return colors;
-	}
-	
-	/**
-	 * Changes the color of all the gui's elements so that they become lighter, with black text instead of white text on a black background.
-	 */
-	public void dayMode(){
-		for(JPanel panel : this.getAllJPanels()){
-			for(Component c : panel.getComponents()){
-				this.changeColor(c, true);
-			}
-		}
-		//Specific elements are changed here
-		this.changeColor(display, true);
-		this.changeColor(userInput, true);
-		this.changeColor(usernameInput, true);
-		this.changeColor(hostInput, true);
-		this.changeColor(portInput, true);
-		this.changeColor(userLabel, true);
-		this.changeColor(hostLabel, true);
-		this.changeColor(portLabel, true);
 	}
 	
 	public JMenuItem getLogout(){

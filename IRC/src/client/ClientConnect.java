@@ -62,7 +62,7 @@ public class ClientConnect implements ActionListener, Runnable, MouseListener, W
 	private void writeToStream(String toWrite, boolean writeUsername) {
 		if(writeUsername) {
 			try {
-				writer.write(username + ": " + toWrite);
+				writer.write(username + ": " + toWrite.trim());
 				writer.newLine();
 				writer.flush();
 			} catch(IOException e1) {
@@ -86,7 +86,7 @@ public class ClientConnect implements ActionListener, Runnable, MouseListener, W
 	 * @return boolean The value of wether the message is spam or not.
 	 */
 	private boolean checkMessage(String input) {
-		if(input.equals(null) || input.equals(""))
+		if(input.equals(null) || input.trim().equals(""))
 			return false;
 		return true;
 	}
@@ -104,6 +104,13 @@ public class ClientConnect implements ActionListener, Runnable, MouseListener, W
 		}
 	}
 	
+	/**
+	 * Logs the user out of the current server. Steps are designed as:
+	 * 1. Write to the stream that a user is leaving the chat
+	 * 2. Set the connection variable to false, this will stop the thread's loop
+	 * 3. Close existing connections between the server and the client
+	 * 4. Lock the chat to return to login mode
+	 */
 	private void logout(){
 		this.writeToStream("User: " + username + " is disconnecting from the server", false);
 		connected = false;
@@ -183,6 +190,8 @@ public class ClientConnect implements ActionListener, Runnable, MouseListener, W
 			if(!manager.equals(null)){
 				gui.getDisplay().setFont(manager.getFont());
 				gui.getInputArea().setFont(manager.getFont());
+				gui.getDisplay().setForeground(manager.getColor());
+				gui.getInputArea().setForeground(manager.getColor());
 			}
 		}catch(NullPointerException e1){
 			
