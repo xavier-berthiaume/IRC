@@ -8,9 +8,11 @@ public class Server {
 
 	private ServerSocket serverSocket;
 	private Hashtable<Socket, BufferedWriter> outputStreams;
+	private LogWriter log;
 	
 	public Server(int port) throws IOException{
 		listen(port);
+		log = new LogWriter();
 	}
 	
 	/**

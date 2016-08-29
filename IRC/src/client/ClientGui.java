@@ -51,6 +51,7 @@ public class ClientGui {
 	private JMenuItem paste;
 	private JMenu window;
 	private JMenuItem font;
+	private JMenuItem options;
 	private JSeparator daynightSplit;
 	private ButtonGroup modeButton;
 	private JRadioButtonMenuItem dayMode;
@@ -78,6 +79,8 @@ public class ClientGui {
 		window.setMnemonic(KeyEvent.VK_W);
 		font = new JMenuItem("Font");
 		font.addMouseListener(connection);
+		options = new JMenuItem("Options");
+		options.addMouseListener(connection);
 		//Separate the radio buttons from the rest of the menu options.
 		daynightSplit = new JSeparator();
 		modeButton = new ButtonGroup();
@@ -97,6 +100,7 @@ public class ClientGui {
 		edit.add(paste);
 		
 		window.add(font);
+		window.add(options);
 		modeButton.add(dayMode);
 		modeButton.add(nightMode);
 		window.add(daynightSplit);
@@ -202,6 +206,7 @@ public class ClientGui {
 		userCaret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		send = new JButton("Send");
 		send.setPreferredSize(new Dimension(75, 75));
+		send.setMnemonic(KeyEvent.VK_ENTER);
 		send.addActionListener(connection);
 		//Add all elements in order to the user panel
 		userPanel.add(userInputScrollPane);
@@ -492,8 +497,8 @@ public class ClientGui {
 	
 	/**
 	 * Changes the color of an element back to its original color upon construction. According to the element a certain color will be chosen from the UIManager's list.
-	 * @param classType A string representation of the 
-	 * @return
+	 * @param classType A string representation of the class of the component that we need to get the default color for
+	 * @return Color[] An array of two colors, the first color being the background color, the second being the foreground
 	 */
 	private Color[] defaultColor(String classType){
 		Color[] colors = new Color[2];
@@ -502,10 +507,18 @@ public class ClientGui {
 		return colors;
 	}
 	
+	/**
+	 * Getter for the logout button.
+	 * @return JButton The logout button
+	 */
 	public JMenuItem getLogout(){
 		return logout;
 	}
 	
+	/**
+	 * Getter for the font JMenuItem
+	 * @return JMenuItem The font button
+	 */
 	public JMenuItem getFontEdit(){
 		return font;
 	}

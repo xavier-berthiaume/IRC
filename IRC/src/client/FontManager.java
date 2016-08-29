@@ -2,7 +2,6 @@ package client;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 import javax.swing.event.*;
 
 public class FontManager implements ItemListener, ChangeListener, ListSelectionListener, ActionListener{

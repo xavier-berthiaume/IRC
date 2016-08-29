@@ -7,6 +7,9 @@ import java.awt.Color;
 
 public class FontWindow extends JFrame {
 
+	static final int MINCOLORVALUE = 0;
+	static final int MAXCOLORVALUE = 255;
+	
 	private JPanel contentPane;
 	private FontManager manager;
 	private JList<String> fontList;
@@ -32,7 +35,7 @@ public class FontWindow extends JFrame {
 		manager = new FontManager(this);
 		setResizable(false);
 		setTitle("Edit Font");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 500, 500);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -103,12 +106,33 @@ public class FontWindow extends JFrame {
 		colorPanel.add(lblColor);
 		
 		String[] displayedColors = {"Black", "Blue", "Red", "Green"};
+		
 		comboBox = new JComboBox<String>(displayedColors);
 		comboBox.addItemListener(manager);
 		colorPanel.add(comboBox);
 		
+		/*
+		 * This is an attempt at making some form of triple slider element that would choose the individual RGB values of the text, making every color possible
+		 * versus having only 4 choices of colors.
+		 * 
+		 * int redValue = 255;
+		int greenValue = 255;
+		int blueValue = 255;
 		
+		JLabel redLabel = new JLabel("R: ");
+		JSlider red = new JSlider(JSlider.HORIZONTAL, FontWindow.MINCOLORVALUE, FontWindow.MAXCOLORVALUE, redValue);
+		JLabel greenLabel = new JLabel("G: ");
+		JSlider green = new JSlider(JSlider.HORIZONTAL, FontWindow.MINCOLORVALUE, FontWindow.MAXCOLORVALUE, greenValue);
+		JLabel blueLabel = new JLabel("B: ");
+		JSlider blue = new JSlider(JSlider.HORIZONTAL, FontWindow.MINCOLORVALUE, FontWindow.MAXCOLORVALUE, blueValue);
 		
+		colorPanel.add(redLabel);
+		colorPanel.add(red);
+		colorPanel.add(greenLabel);
+		colorPanel.add(green);
+		colorPanel.add(blueLabel);
+		colorPanel.add(blue);
+		*/
 		
 		JPanel sizePanel = new JPanel();
 		optionsPanel.add(sizePanel);
